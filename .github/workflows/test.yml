@@ -43,20 +43,47 @@ jobs:
         runs-on: windows-latest
         env:
             RUSTFLAGS: "--codegen target-feature=+crt-static"
+            TARGET: "x86_64-pc-windows-msvc"
         steps:
             - uses: actions/checkout@v4
             - name: build without hdf5
-              run: cargo build --target x86_64-pc-windows-msvc
+              run: cargo build --target ${{ env.TARGET }}
             
             - name: Check linkage
               shell: bash
-              run: ldd target/x86_64-pc-windows-msvc/debug/hdf5-static-linking.exe
+              run: ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe
             
             - name: build WITH hdf5
-              run: cargo build --target x86_64-pc-windows-msvc --features hdf5
+              run: cargo build --target ${{ env.TARGET }} --features hdf5
             
             - name: Check linkage
               shell: bash
               run: |
-                ldd target/x86_64-pc-windows-msvc/debug/hdf5-static-linking.exe
-                ldd target/x86_64-pc-windows-msvc/debug/hdf5-static-linking.exe | grep statically
+                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe
+                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe | grep statically
+
+    build-macos:
+        runs-on: macos-latest
+        env:
+            RUSTFLAGS: "--codegen target-feature=+crt-static"
+            TARGET: "x86_64-apple-darwin"
+        steps:
+        - uses: actions/checkout@v4
+        - name: Setup
+          run: rustup target add x86_64-apple-darwin
+
+        - name: build without hdf5
+          run: cargo build --target ${{ env.TARGET }}
+
+        - name: Check linkage
+          shell: bash
+          run: ldd target/${{ env.TARGET }}/debug/hdf5-static-linking
+        
+        - name: build WITH hdf5
+          run: cargo build --target ${{ env.TARGET }} --features hdf5
+        
+        - name: Check linkage
+          shell: bash
+          run: |
+            ldd target/${{ env.TARGET }}/debug/hdf5-static-linking
+            ldd target/${{ env.TARGET }}/debug/hdf5-static-linking | grep statically
