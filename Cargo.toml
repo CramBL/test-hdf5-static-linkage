@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-hdf5 = { package = "hdf5-metno", version = "0.10.0", optional = true }
+hdf5 = { package = "hdf5-metno", git = "https://github.com/CramBL/hdf5-rust.git", version = "0.10.0", optional = true }
 
 [features]
 default = []
