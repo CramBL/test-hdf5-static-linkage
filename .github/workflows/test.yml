@@ -15,23 +15,24 @@ jobs:
         runs-on: ubuntu-latest
         env:
             RUSTFLAGS: "--codegen target-feature=+crt-static"
+            TARGET: "x86_64-unknown-linux-musl"
         steps:
             - uses: actions/checkout@v4
-            - run: rustup target add x86_64-unknown-linux-musl
+            - run: rustup target add ${{ env.TARGET }}
 
             - name: build without hdf5
-              run: cargo build --target x86_64-unknown-linux-musl
+              run: cargo build --target ${{ env.TARGET }}
 
             - name: Check linkage
-              run: ldd target/x86_64-unknown-linux-musl/debug/hdf5-static-linking
+              run: ldd target/${{ env.TARGET }}/debug/hdf5-static-linking
             
             - name: build WITH hdf5
-              run: cargo build --target x86_64-unknown-linux-musl --features hdf5
+              run: cargo build --target ${{ env.TARGET }} --features hdf5
             
             - name: Check linkage
               run: |
-                ldd target/x86_64-unknown-linux-musl/debug/hdf5-static-linking
-                ldd target/x86_64-unknown-linux-musl/debug/hdf5-static-linking | grep statically
+                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking
+                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking | grep statically
 
 
     build-windows:
