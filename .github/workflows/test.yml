@@ -70,6 +70,40 @@ jobs:
               shell: pwsh
               run: .\build_check_linkage.ps1
 
+    build-windows-set-hdf5-dir:
+        runs-on: windows-latest
+        env:
+            RUSTFLAGS: "--codegen target-feature=+crt-static"
+            TARGET: "x86_64-pc-windows-msvc"
+            HDF5_VERSION: "1.14.0"
+        steps:
+            - uses: actions/checkout@v4
+            - name: Setup
+              shell: bash
+              run: |
+                VERSION="${{ env.HDF5_VERSION }}"
+                DL_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-${{ env.HDF5_VERSION }}/bin/windows/hdf5-${{ env.HDF5_VERSION }}-Std-win10_64-vs16.zip"
+                # Download and extract HDF5
+                curl -L -o hdf5.zip "${DL_URL}"
+                unzip hdf5.zip
+                echo "HDF5_DIR=C:\\Program Files\\HDF_Group\\HDF5\\${{ env.HDF5_VERSION }}" >> $GITHUB_ENV
+                echo "C:\\Program Files\\HDF_Group\\HDF5\\${{ env.HDF5_VERSION }}\\bin" >> $GITHUB_PATH
+
+            - name: Install hdf5
+              shell: pwsh
+              run: |
+                cd hdf
+                msiexec /i HDF5-1.14.0-win64.msi /quiet /qn /norestart
+
+            - name: build WITH hdf5
+              run: cargo build --target ${{ env.TARGET }} --features hdf5
+
+            - name: Check linkage
+              shell: bash
+              run: |
+                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe
+                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe | grep --invert-match hdf5
+
     build-macos:
         runs-on: macos-latest
         env:
