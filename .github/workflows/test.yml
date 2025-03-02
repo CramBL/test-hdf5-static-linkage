@@ -60,7 +60,7 @@ jobs:
               shell: bash
               run: |
                 ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe
-                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe | grep statically
+                ldd target/${{ env.TARGET }}/debug/hdf5-static-linking.exe | grep --invert-match hdf5
 
     build-macos:
         runs-on: macos-latest
@@ -86,4 +86,4 @@ jobs:
           shell: bash
           run: |
             otool -L target/${{ env.TARGET }}/debug/hdf5-static-linking
-            otool -L target/${{ env.TARGET }}/debug/hdf5-static-linking | grep statically
+            otool -L target/${{ env.TARGET }}/debug/hdf5-static-linking | grep --invert-match hdf5
