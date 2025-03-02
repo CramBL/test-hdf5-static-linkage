@@ -42,7 +42,7 @@ jobs:
     build-windows:
         runs-on: windows-latest
         env:
-            RUSTFLAGS: "--codegen target-feature=+crt-static"
+            RUSTFLAGS: "--codegen target-feature=+crt-static -C link-arg=/NODEFAULTLIB:MSVCRTD"
             TARGET: "x86_64-pc-windows-msvc"
         steps:
             - uses: actions/checkout@v4
