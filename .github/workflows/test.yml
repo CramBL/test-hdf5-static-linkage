@@ -50,6 +50,13 @@ jobs:
             TARGET: "x86_64-pc-windows-msvc"
         steps:
             - uses: actions/checkout@v4
+            - name: Install Rust stable-msvc
+              uses: dtolnay/rust-toolchain@stable
+              with: { toolchain: stable-msvc }
+
+            - name: Rust version
+              run: rustc --version
+
             - name: build without hdf5
               run: cargo build --target ${{ env.TARGET }}
             
