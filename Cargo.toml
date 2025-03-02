@@ -1,0 +1,11 @@
+[package]
+name = "hdf5-static-linking"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hdf5 = { package = "hdf5-metno", version = "0.10.0", optional = true }
+
+[features]
+default = []
+hdf5 = ["hdf5/static"]

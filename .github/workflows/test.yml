@@ -1,0 +1,55 @@
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: ["trunk"]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUST_LOG: debug
+
+jobs:
+    build-linux-musl:
+        runs-on: ubuntu-latest
+        env:
+            RUSTFLAGS: "--codegen target-feature=+crt-static"
+        steps:
+            - uses: actions/checkout@v4
+            - name: build without hdf5
+              run: cargo build --target x86_64-unknown-linux-musl
+
+            - name: Check linkage
+              run: ldd target/x86_64-unknown-linux-musl/debug/hdf5-static-linking
+            
+            - name: build WITH hdf5
+              run: cargo build --target x86_64-unknown-linux-musl --features hdf5
+            
+            - name: Check linkage
+              run: |
+                ldd target/x86_64-unknown-linux-musl/debug/hdf5-static-linking
+                ldd target/x86_64-unknown-linux-musl/debug/hdf5-static-linking | grep statically
+
+
+    build-windows:
+        runs-on: windows-latest
+        env:
+            RUSTFLAGS: "--codegen target-feature=+crt-static"
+        steps:
+            - uses: actions/checkout@v4
+            - name: build without hdf5
+              run: cargo build --target x86_64-pc-windows-msvc
+            
+            - name: Check linkage
+              shell: bash
+              run: ldd target/x86_64-pc-windows-msvc/debug/hdf5-static-linking.exe
+            
+            - name: build WITH hdf5
+              run: cargo build --target x86_64-pc-windows-msvc --features hdf5
+            
+            - name: Check linkage
+              shell: bash
+              run: |
+                ldd target/x86_64-pc-windows-msvc/debug/hdf5-static-linking.exe
+                ldd target/x86_64-pc-windows-msvc/debug/hdf5-static-linking.exe | grep statically
