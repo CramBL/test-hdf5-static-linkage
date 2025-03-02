@@ -40,7 +40,11 @@ jobs:
 
 
     build-windows:
-        runs-on: windows-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [windows-2019, windows-2022]
+        runs-on: ${{ matrix.os }}
         env:
             RUSTFLAGS: "--codegen target-feature=+crt-static"
             TARGET: "x86_64-pc-windows-msvc"
