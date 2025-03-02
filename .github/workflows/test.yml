@@ -77,7 +77,7 @@ jobs:
 
         - name: Check linkage
           shell: bash
-          run: ldd target/${{ env.TARGET }}/debug/hdf5-static-linking
+          run: otool -L target/${{ env.TARGET }}/debug/hdf5-static-linking
         
         - name: build WITH hdf5
           run: cargo build --target ${{ env.TARGET }} --features hdf5
@@ -85,5 +85,5 @@ jobs:
         - name: Check linkage
           shell: bash
           run: |
-            ldd target/${{ env.TARGET }}/debug/hdf5-static-linking
-            ldd target/${{ env.TARGET }}/debug/hdf5-static-linking | grep statically
+            otool -L target/${{ env.TARGET }}/debug/hdf5-static-linking
+            otool -L target/${{ env.TARGET }}/debug/hdf5-static-linking | grep statically
