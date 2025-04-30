@@ -46,7 +46,7 @@ jobs:
                 os: [windows-2019, windows-2022]
         runs-on: ${{ matrix.os }}
         env:
-            RUSTFLAGS: "--codegen target-feature=+crt-static"
+            RUSTFLAGS: "--codegen target-feature=+crt-static -C link-arg=/NODEFAULTLIB:MSVCRTD"
             TARGET: "x86_64-pc-windows-msvc"
         steps:
             - uses: actions/checkout@v4
